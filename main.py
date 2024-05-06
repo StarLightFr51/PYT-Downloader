@@ -1,3 +1,5 @@
+#Version 1.2.0
+
 import tkinter
 import customtkinter
 from pytube import YouTube
