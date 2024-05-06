@@ -1,4 +1,5 @@
-#Version 1.2.0
+#App's Version 1.2.0
+#Open Source Project (Do what you want with it)
 
 import tkinter
 import customtkinter
