@@ -4,6 +4,7 @@ from pytube import YouTube
 from PIL import ImageTk, Image
 import urllib.request
 import winsound
+import datetime
 import io
 import os
 
@@ -22,16 +23,19 @@ def download_video():
         img = Image.open(io.BytesIO(raw_data))
         photo = ImageTk.PhotoImage(img)
         thumbnail_image.configure(image=photo)
+        video_time = datetime.timedelta(seconds=ytObj.length)
+        video_release_date = ytObj.publish_date
 
-
+        releaseLabel.configure(text=f"Video release the {video_release_date}")
+        timeLabel.configure(text=f"Duration : {video_time}")
         finishLabel.configure(text="")
-        confirmation_label.configure(text="Are you sure you want to download this video ?", text_color = "white")
+        confirmation_label.configure(text="Are you sure you want to download this video ?")
         title.configure(text=f"{video_title} by {video_author}")
 
         thumbnail_image.pack()
         confirmation_button.pack(pady=10)
     except Exception as e:
-        first_error_label.configure(text="url invalid or an unexpected error occurred", text_color="red")
+        finishLabel.configure(text="url invalid or an unexpected error occurred", text_color="red")
         print(e)
 
 def confirm_download():
@@ -47,6 +51,7 @@ def confirm_download():
 
     except Exception as e:
         finishLabel.configure(text="url invalid or an unexpected error occurred", text_color="red")
+        print(e)
         
 app = customtkinter.CTk()
 
@@ -62,32 +67,38 @@ y = (screen_height/2) - (height/2)
 
 app.geometry('%dx%d+%d+%d' % (width, height, x, y))
 app.title("PYT Video Downloader")
+app.resizable(False, False)
 
-label = customtkinter.CTkLabel(app, text="Insert a youtube link")
+scroll = customtkinter.CTkScrollableFrame(app, width= width, height= height, orientation="vertical")
+scroll.pack()
+
+label = customtkinter.CTkLabel(scroll, text="Insert a youtube link")
 label.pack(padx=10, pady=10)
 
 url = tkinter.StringVar()
-link = customtkinter.CTkEntry(app, width=550, height=35, textvariable=url)
+link = customtkinter.CTkEntry(scroll, width=550, height=35, textvariable=url)
 link.pack()
 
-#Finished Label
-first_error_label = customtkinter.CTkLabel(app, text="")
-first_error_label.pack()
-
-download = customtkinter.CTkButton(app, text="Download Video", command=download_video)
+download = customtkinter.CTkButton(scroll, text="Download Video", command=download_video)
 download.pack(pady=5)
 
-confirmation_label = customtkinter.CTkLabel(app, text="")
+confirmation_label = customtkinter.CTkLabel(scroll, text="")
 confirmation_label.pack(pady=10)
 
-title = customtkinter.CTkLabel(app, text="")
-title.pack(pady=2)
+title = customtkinter.CTkLabel(scroll, text="")
+title.pack()
 
-thumbnail_image = customtkinter.CTkLabel(app, text="")
+releaseLabel = customtkinter.CTkLabel(scroll, text="")
+releaseLabel.pack()
 
-confirmation_button = customtkinter.CTkButton(app, text="Finish Download", command=confirm_download)
+timeLabel = customtkinter.CTkLabel(scroll, text="")
+timeLabel.pack()
 
-finishLabel = customtkinter.CTkLabel(app, text="")
+thumbnail_image = customtkinter.CTkLabel(scroll, text="")
+
+confirmation_button = customtkinter.CTkButton(scroll, text="Finish Download", command=confirm_download)
+
+finishLabel = customtkinter.CTkLabel(scroll, text="")
 finishLabel.pack(pady=5)
 
 app.mainloop()
